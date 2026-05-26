@@ -15,17 +15,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    // system_instruction is not supported in v1, so prepend it to the first message
-    if (contents.length > 0 && contents[0].role === 'user') {
-      contents[0].parts[0].text = `[System Instructions]\n${systemPrompt}\n\n[User Request]\n${contents[0].parts[0].text}`;
-    }
-
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          system_instruction: { parts: [{ text: systemPrompt }] },
           contents: contents
         })
       }
