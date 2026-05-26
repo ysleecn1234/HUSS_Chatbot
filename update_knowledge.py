@@ -36,7 +36,7 @@ URLS = {
     # 국민대 기후변화대응사업단 메인 (뉴스 + 행사)
     "국민대_메인": "https://www.climate.ac.kr/",
     # 국민대 공지사항
-    "국민대_공지": "https://www.climate.ac.kr/ko/news/notice",
+    "국민대_공지": "https://cms.kookmin.ac.kr/climatechange/community/notice.do",
 }
 
 HEADERS = {
@@ -498,7 +498,7 @@ def build_dynamic_knowledge(courses, kw_notices, kw_schedules, km_news, km_activ
             notice_section += "\n"
         
         notice_section += "\n※ 전체 공지(광운대): https://huss.kw.ac.kr/bulletin/notice.php"
-        notice_section += "\n※ 전체 공지(국민대): https://www.climate.ac.kr/ko/news/notice"
+        notice_section += "\n※ 전체 공지(국민대): https://cms.kookmin.ac.kr/climatechange/community/notice.do"
         sections.append(notice_section)
 
     # ── 광운대 HUSS 사업단 일정 ──
@@ -516,7 +516,7 @@ def build_dynamic_knowledge(courses, kw_notices, kw_schedules, km_news, km_activ
         for n in km_news:
             date_str = f" ({n['date']})" if n.get('date') else ""
             km_section += f"- {n['title']}{date_str}\n"
-        km_section += "\n※ 전체 소식: https://www.climate.ac.kr/ko/news/press"
+        km_section += "\n※ 전체 소식: https://cms.kookmin.ac.kr/climatechange/community/notice.do"
         sections.append(km_section)
 
     # ── 국민대 최근 활동 ──
@@ -535,8 +535,8 @@ def build_dynamic_knowledge(courses, kw_notices, kw_schedules, km_news, km_activ
     sections.append(dept_section)
 
     # ── 폴백: 공지가 전혀 없을 때 ──
-    if not kw_notices and not km_news:
-        sections.append("【최근 공지사항】\n※ 광운대: https://huss.kw.ac.kr/bulletin/notice.php\n※ 국민대: https://www.climate.ac.kr/ko/news/notice")
+    if km_notices or kw_notices or courses:
+        sections.append("【최근 공지사항】\n※ 광운대: https://huss.kw.ac.kr/bulletin/notice.php\n※ 국민대: https://cms.kookmin.ac.kr/climatechange/community/notice.do")
 
     return "\n\n".join(sections)
 
