@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUSS 글로벌 공생 AI 챗봇 기획표</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    line-height: 1.7;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 48px 32px;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2b579a 50%, #3a7bd5 100%);
+    border-radius: 16px;
+    margin-bottom: 32px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .header .subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    opacity: 0.9;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .header .meta {
+    font-size: 13px;
+    opacity: 0.65;
+    position: relative;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin: 4px;
+    position: relative;
+  }
+
+  /* Section */
+  .section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #e8eaed;
+  }
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2b579a;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #2b579a;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  thead th {
+    background: #2b579a;
+    color: #fff;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  thead th:first-child { border-radius: 8px 0 0 0; }
+  thead th:last-child { border-radius: 0 8px 0 0; }
+  tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #f8f9fb; }
+  .label-cell {
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    width: 140px;
+  }
+  .category-row td {
+    background: #e8eef6;
+    font-weight: 700;
+    color: #2b579a;
+    padding: 10px 16px;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Sub section */
+  .sub-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 24px 0 12px;
+    padding-left: 12px;
+    border-left: 3px solid #2b579a;
+  }
+  .info-text {
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+  .info-text strong { color: #2b579a; }
+
+  /* WITH-US cards */
+  .withus-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .withus-card {
+    background: #f4f7fb;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #dde3ed;
+  }
+  .withus-card .letter {
+    font-size: 24px;
+    font-weight: 800;
+    color: #2b579a;
+    margin-bottom: 4px;
+  }
+  .withus-card .meaning {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 6px;
+  }
+  .withus-card .desc {
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+  }
+
+  /* Feature cards */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .feature-card {
+    background: #f8f9fb;
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid #e8eaed;
+  }
+  .feature-card h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+  .feature-card .desc {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 8px;
+  }
+  .feature-card .impl {
+    font-size: 12px;
+    color: #2b579a;
+    background: #e8eef6;
+    padding: 6px 10px;
+    border-radius: 6px;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .timeline-step {
+    flex: 1;
+    position: relative;
+    padding: 20px 16px;
+    background: #f4f7fb;
+    border-radius: 10px;
+    border: 1px solid #dde3ed;
+    text-align: center;
+  }
+  .timeline-step .step-num {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    background: #2b579a;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .timeline-step h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 4px;
+  }
+  .timeline-step .time {
+    font-size: 13px;
+    color: #2b579a;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .timeline-step .detail {
+    font-size: 12px;
+    color: #666;
+  }
+  .timeline-step + .timeline-step::before {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 8px solid #2b579a;
+  }
+
+  /* Tech stack */
+  .tech-stack {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .tech-item {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+    background: #f8f9fb;
+    border-radius: 10px;
+    border: 1px solid #e8eaed;
+  }
+  .tech-item .tech-label {
+    font-weight: 700;
+    font-size: 13px;
+    color: #2b579a;
+    min-width: 80px;
+  }
+  .tech-item .tech-desc {
+    font-size: 13px;
+    color: #444;
+  }
+
+  /* Links */
+  .link-list {
+    list-style: none;
+    padding: 0;
+  }
+  .link-list li {
+    padding: 10px 16px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  .link-list li:last-child { border-bottom: none; }
+  .link-list a {
+    color: #2b579a;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .link-list a:hover { text-decoration: underline; }
+  .link-list .link-desc {
+    font-size: 12px;
+    color: #888;
+    margin-left: 8px;
+  }
+
+  /* Note box */
+  .note-box {
+    background: #fffbe6;
+    border: 1px solid #ffe58f;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #665500;
+  }
+  .note-box strong { color: #b38600; }
+
+  @media (max-width: 768px) {
+    .container { padding: 16px 12px 60px; }
+    .header { padding: 32px 20px; }
+    .header h1 { font-size: 24px; }
+    .section { padding: 20px; }
+    .withus-grid { grid-template-columns: repeat(2, 1fr); }
+    .feature-grid { grid-template-columns: 1fr; }
+    .timeline { flex-direction: column; }
+    .timeline-step + .timeline-step::before { display: none; }
+    .tech-stack { grid-template-columns: 1fr; }
+    table { font-size: 13px; }
+    thead th, tbody td { padding: 8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>HUSS 글로벌 공생 AI 챗봇</h1>
+    <div class="subtitle">기획표</div>
+    <div>
+      <span class="badge">광운대학교</span>
+      <span class="badge">국민대학교</span>
+      <span class="badge">HUSS 컨소시엄</span>
+    </div>
+    <div class="meta" style="margin-top: 16px;">작성일: 2026년 5월 20일</div>
+  </div>
+
+  <!-- 1. 프로젝트 개요 -->
+  <div class="section">
+    <div class="section-title"><span class="num">1</span>프로젝트 개요</div>
+    <table>
+      <thead>
+        <tr><th style="width:160px;">항목</th><th>내용</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="label-cell">프로젝트명</td><td>HUSS 글로벌 공생 AI 챗봇<br><span style="color:#888; font-size:12px;">Designing AI Chatbots for Global Symbiosis</span></td></tr>
+        <tr><td class="label-cell">목적</td><td>HUSS 사업을 모르는 대학생에게 광운대&middot;국민대 HUSS 글로벌 공생 컨소시엄을 알리고, 참여를 유도하는 AI 챗봇 제작</td></tr>
+        <tr><td class="label-cell">타겟 사용자</td><td>HUSS를 모르는 광운대&middot;국민대 재학생 및 일반 대학생</td></tr>
+        <tr><td class="label-cell">배포 형태</td><td>웹사이트 임베드형 챗봇 (HTML/CSS/JS 단일 파일)</td></tr>
+        <tr><td class="label-cell">기술 스택</td><td>Google AI Studio (Gemini API) 또는 Claude API + 시스템 프롬프트 기반</td></tr>
+        <tr><td class="label-cell">관련 사업</td><td>교육부&middot;한국연구재단 인문사회융합인재양성사업(HUSS) &mdash; 총 8개 독립 컨소시엄 운영</td></tr>
+        <tr><td class="label-cell">소속 컨소시엄</td><td><strong>"글로벌 공생"</strong> 컨소시엄 (2024.06 ~ 2027.02, 연 30억)<br>주관: 광운대 / 참여: 국민대&middot;선문대&middot;영남대&middot;호남대<br><span style="color:#888; font-size:12px;">※ 국민대는 별도로 "환경" 컨소시엄 주관대학이기도 함</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. HUSS 배경 정보 -->
+  <div class="section">
+    <div class="section-title"><span class="num">2</span>HUSS 배경 정보</div>
+
+    <div class="sub-title">2-1. HUSS란?</div>
+    <p class="info-text">
+      <strong>HUSS (Humanities, Utmost Sharing System)</strong>는 학과 간의 벽을 없애고 대학 간의 자원을 공유하며, 미래를 이끌어 갈 인문사회 융합인재를 양성하는 교육부&middot;한국연구재단 지원 사업입니다. 총 <strong>8개 독립 컨소시엄</strong>(디지털, 환경, 위험사회, 인구구조, 글로벌&middot;문화, 지역, 사회구조, 글로벌 공생)이 각각 별도의 주관대학 아래 운영됩니다. 광운대는 <strong>"글로벌 공생"</strong> 분야 주관대학이고, 국민대는 글로벌 공생 참여대학이면서 동시에 <strong>"환경"</strong> 분야의 주관대학입니다.
+    </p>
+
+    <div class="sub-title">2-2. HUSS 전체 컨소시엄 구조 (8개 독립 운영)</div>
+    <table>
+      <thead>
+        <tr><th>분야</th><th>주관대학</th><th>참여대학</th><th>선정</th></tr>
+      </thead>
+      <tbody>
+        <tr class="category-row"><td colspan="4">기존 5개 연합체 (2023년 선정)</td></tr>
+        <tr><td>디지털</td><td class="label-cell">고려대</td><td>충남대, 숙명여대, 순천대, 영남대</td><td>2023</td></tr>
+        <tr><td><strong>환경</strong></td><td class="label-cell"><strong>국민대</strong></td><td>덕성여대, 인하대, 울산대, 조선대</td><td>2023</td></tr>
+        <tr><td>위험사회</td><td class="label-cell">선문대</td><td>세종대, 순천대, 순천향대, 한밭대</td><td>2023</td></tr>
+        <tr><td>인구구조</td><td class="label-cell">성균관대</td><td>가천대, 충남대, 건양대, 한동대</td><td>2023</td></tr>
+        <tr><td>글로벌&middot;문화</td><td class="label-cell">단국대</td><td>청강문화산업대, 동서대, 원광대, 한서대</td><td>2023</td></tr>
+        <tr class="category-row"><td colspan="4">신규 3개 연합체 (2024년 선정)</td></tr>
+        <tr><td>지역</td><td class="label-cell">전주대</td><td>경북대, 동국대, 한남대, 한림대</td><td>2024</td></tr>
+        <tr><td>사회구조</td><td class="label-cell">서강대</td><td>단국대, 대전대, 상명대, 원광대</td><td>2024</td></tr>
+        <tr style="background:#e8eef6;"><td><strong>글로벌 공생</strong></td><td class="label-cell"><strong>광운대</strong></td><td><strong>국민대</strong>, 선문대, 영남대, 호남대</td><td>2024</td></tr>
+      </tbody>
+    </table>
+    <div class="note-box">
+      <strong>핵심 포인트:</strong> 각 컨소시엄은 독립적으로 운영됩니다. 국민대는 "환경" 분야에서는 주관대학이고, "글로벌 공생" 분야에서는 참여대학입니다. 선문대 역시 "위험사회" 분야 주관대학이면서 "글로벌 공생" 참여대학입니다. 하나의 대학이 여러 컨소시엄에 동시 참여할 수 있습니다.
+    </div>
+
+    <div class="sub-title">2-3. 글로벌 공생 인재상 (WITH-US)</div>
+    <div class="withus-grid">
+      <div class="withus-card">
+        <div class="letter">W</div>
+        <div class="meaning">Welfare promotion</div>
+        <div class="desc">공정경제와 적정기술을 통한 복지 증진</div>
+      </div>
+      <div class="withus-card">
+        <div class="letter">I</div>
+        <div class="meaning">Integration of tradition & future tech</div>
+        <div class="desc">산업/도시 전통과 미래기술 통합 사고</div>
+      </div>
+      <div class="withus-card">
+        <div class="letter">T</div>
+        <div class="meaning">Transformation management</div>
+        <div class="desc">지속가능 사회로의 변화관리 주도</div>
+      </div>
+      <div class="withus-card">
+        <div class="letter">H</div>
+        <div class="meaning">Human resources for sustainability</div>
+        <div class="desc">도시/산업의 지속가능한 공생과 성장</div>
+      </div>
+      <div class="withus-card">
+        <div class="letter">U</div>
+        <div class="meaning">Uplifting global cooperation</div>
+        <div class="desc">글로벌 인적&middot;물적 자원 협력 증진</div>
+      </div>
+      <div class="withus-card">
+        <div class="letter">S</div>
+        <div class="meaning">Symbiosis between countries</div>
+        <div class="desc">국가와 지역 간 공생과 성장에 기여</div>
+      </div>
+    </div>
+
+    <div class="sub-title">2-4. 글로벌 공생 컨소시엄 참여 대학 및 학과</div>
+    <table>
+      <thead>
+        <tr><th>대학</th><th>역할</th><th>참여 학과</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="label-cell">광운대학교</td>
+          <td>허브(주관)</td>
+          <td>국제통상학부, 국제학부, 법학부, 행정학과, 미디어커뮤니케이션학부, 국어국문학과, 영어산업학과, 정보융합학부 (8개 학과)</td>
+        </tr>
+        <tr>
+          <td class="label-cell">국민대학교</td>
+          <td>참여(수도권)</td>
+          <td>한국어문학부, 한국역사학과, 사회학과, 행정학과, 경영정보, 정치외교학과, 국제경영, 임상생명공학과, 건설시스템공학과 (9개 학과)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sub-title">2-5. 대학별 미션 (글로벌 공생 내)</div>
+    <table>
+      <thead>
+        <tr><th>대학</th><th>핵심 미션</th><th>주요 역량</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="label-cell">광운대</td><td>초연결&middot;초융합 지향</td><td>강의 인프라 개발 전문, 기업 연계 실무체험 프로그램</td></tr>
+        <tr><td class="label-cell">국민대</td><td>기후변화 전문 (글로벌 공생 참여)<br><span style="font-size:12px; color:#888;">+ 환경 컨소시엄 주관대학</span></td><td>융합교육 전문, 교과과정 플랫폼 전문, 글로벌 서비스러닝<br><span style="font-size:12px; color:#888;">환경 컨소시엄: 덕성여대&middot;인하대&middot;울산대&middot;조선대와 기후변화 대응</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. 챗봇 핵심 콘텐츠 -->
+  <div class="section">
+    <div class="section-title"><span class="num">3</span>챗봇 핵심 콘텐츠 설계</div>
+    <table>
+      <thead>
+        <tr><th style="width:120px;">카테고리</th><th style="width:200px;">질문 예시</th><th>챗봇 응답 방향</th></tr>
+      </thead>
+      <tbody>
+        <tr class="category-row"><td colspan="3">A. HUSS 사업 소개</td></tr>
+        <tr><td>HUSS 정의</td><td>"HUSS가 뭐야?"</td><td>Humanities, Utmost Sharing System. 학과/대학 간 벽을 허물고 융합인재 양성하는 교육부 지원 사업</td></tr>
+        <tr><td>컨소시엄 구성</td><td>"어떤 대학이 참여해?"</td><td>광운대(주관), 국민대, 선문대, 영남대, 호남대 5개교 컨소시엄. 각 대학별 역할 소개</td></tr>
+        <tr><td>사업 목표</td><td>"뭐 배우는 거야?"</td><td>글로벌 리소스 코디네이터 & 산업/도시 지속가능성 전문가 양성</td></tr>
+
+        <tr class="category-row"><td colspan="3">B. 참여 방법 안내</td></tr>
+        <tr><td>수강 방법</td><td>"어떻게 참여해?"</td><td>HUSS 융합교과목 수강 신청. 타 대학 공동교과목도 수강 가능 (husslms.ac.kr)</td></tr>
+        <tr><td>혜택/장학금</td><td>"참여하면 뭐가 좋아?"</td><td>나노디그리(6학점)/마이크로디그리(9학점) 인증서, 성적우수 장학금, 성과우수 장학금, 해외교류 프로그램</td></tr>
+        <tr><td>프로그램</td><td>"어떤 활동이 있어?"</td><td>ESG 상생캠퍼스, 글로벌 IT기업 프로젝트, AWS 빅테크 진로체험, 해외기관 문제해결형 프로그램</td></tr>
+
+        <tr class="category-row"><td colspan="3">C. 글로벌 공생 주제</td></tr>
+        <tr><td>SDGs 연계</td><td>"글로벌 공생이 뭐야?"</td><td>UN SDGs 17개 목표와 연계한 인류&middot;자원의 지속가능성 추구. 국가/지역 간 공생과 성장에 기여</td></tr>
+        <tr><td>실제 활동</td><td>"구체적으로 뭘 해?"</td><td>베트남 세계시민 마을 만들기, 볼주립대 공동 지속가능성 캠페인, 뉴욕 고등학생 초청 프로그램</td></tr>
+
+        <tr class="category-row"><td colspan="3">D. 광운대 특화 정보</td></tr>
+        <tr><td>광운대 특징</td><td>"광운대에서는 뭐해?"</td><td>초연결&middot;초융합 지향, 기업 연계 실무체험, 글로벌 IT기업 연계 융합교육, 강의 인프라 개발</td></tr>
+        <tr><td>광운대 교과목</td><td>"광운대 수업 뭐 있어?"</td><td>기존 25개 + 신규 16개 교과목 (디지털시대의 국어, 글로벌이슈와 정책, 그래픽내러티브 등)</td></tr>
+
+        <tr class="category-row"><td colspan="3">E. 국민대 특화 정보</td></tr>
+        <tr><td>국민대 특징</td><td>"국민대에서는 뭐해?"</td><td>기후변화 전문, 융합교육 전문, 교과과정 플랫폼 전문. 글로벌 서비스러닝 프로그램</td></tr>
+        <tr><td>국민대 교과목</td><td>"국민대 수업 뭐 있어?"</td><td>기존 20개 + 신규 13개 교과목 (세계속의 한국학, AI기반 플랫폼 활용 동아시아 역사와 문화 등)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. 추가 기능 -->
+  <div class="section">
+    <div class="section-title"><span class="num">4</span>추가 기능 설계</div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>FAQ 퀵버튼</h4>
+        <div class="desc">자주 묻는 질문 버튼을 채팅창 하단에 배치하여 진입 장벽을 낮춤</div>
+        <div class="impl">"HUSS가 뭐야?" / "어떻게 참여해?" / "장학금 있어?" / "어떤 수업 들어?"</div>
+      </div>
+      <div class="feature-card">
+        <h4>관련 링크 자동 안내</h4>
+        <div class="desc">답변 중 공식 사이트&middot;신청 페이지 링크를 자연스럽게 포함</div>
+        <div class="impl">huss.kw.ac.kr, husslms.ac.kr 등 공식 URL 제공</div>
+      </div>
+      <div class="feature-card">
+        <h4>대학생 눈높이 톤</h4>
+        <div class="desc">딱딱한 공문체 대신 친근하고 쉬운 말투로 응답</div>
+        <div class="impl">시스템 프롬프트에 "친근한 선배" 페르소나 설정</div>
+      </div>
+      <div class="feature-card">
+        <h4>교과목 검색</h4>
+        <div class="desc">광운대/국민대 HUSS 교과목을 질문에 따라 안내</div>
+        <div class="impl">시스템 프롬프트에 교과목 목록 데이터 사전 주입</div>
+      </div>
+      <div class="feature-card">
+        <h4>대학별 필터링</h4>
+        <div class="desc">"광운대 기준으로 알려줘" 같은 대학 필터 지원</div>
+        <div class="impl">질문에서 대학명 감지 시 해당 대학 정보 우선 응답</div>
+      </div>
+      <div class="feature-card">
+        <h4>핵심 역량 안내</h4>
+        <div class="desc">WITH-US 인재상의 6대 역량을 쉽게 풀어서 설명</div>
+        <div class="impl">통합역량, 지구리터러시, 변화관리, 거버넌스, 공정가치, 사회기여</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 기술 구조 -->
+  <div class="section">
+    <div class="section-title"><span class="num">5</span>기술 구조</div>
+    <div class="tech-stack">
+      <div class="tech-item">
+        <span class="tech-label">프론트엔드</span>
+        <span class="tech-desc">HTML/CSS/JS 단일 파일. 채팅 UI + FAQ 버튼 + 대학 필터. 웹사이트 iframe 임베드 가능</span>
+      </div>
+      <div class="tech-item">
+        <span class="tech-label">LLM API</span>
+        <span class="tech-desc">Gemini API (AI Studio) 또는 Claude API. 프론트엔드에서 직접 호출</span>
+      </div>
+      <div class="tech-item">
+        <span class="tech-label">시스템 프롬프트</span>
+        <span class="tech-desc">HUSS 지식 베이스 + 페르소나 설정 + 응답 규칙 사전 주입</span>
+      </div>
+      <div class="tech-item">
+        <span class="tech-label">백엔드</span>
+        <span class="tech-desc">없음 (Serverless). API 키는 환경변수 또는 프론트엔드에서 직접 관리</span>
+      </div>
+    </div>
+    <div class="note-box">
+      <strong>크롤링이 필요한가?</strong> 현재 구현 범위에서는 불필요합니다. 시스템 프롬프트에 지식을 미리 넣는 방식이므로, 정보가 변경되면 프롬프트만 업데이트하면 됩니다. 실시간 공지사항 반영이 필요해지면 추후 RAG(검색 증강 생성) 도입을 검토할 수 있습니다.
+    </div>
+  </div>
+
+  <!-- 6. 구현 일정 -->
+  <div class="section">
+    <div class="section-title"><span class="num">6</span>구현 일정 (총 ~90분)</div>
+    <div class="timeline">
+      <div class="timeline-step">
+        <div class="step-num">1</div>
+        <h4>지식 수집</h4>
+        <div class="time">~20분</div>
+        <div class="detail">HUSS 정보 정리<br>(광운대&middot;국민대 중심)</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-num">2</div>
+        <h4>프롬프트 설계</h4>
+        <div class="time">~20분</div>
+        <div class="detail">페르소나 + 응답 규칙<br>+ 지식 데이터 주입</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-num">3</div>
+        <h4>UI 제작</h4>
+        <div class="time">~30분</div>
+        <div class="detail">챗봇 인터페이스<br>HTML/CSS/JS</div>
+      </div>
+      <div class="timeline-step">
+        <div class="step-num">4</div>
+        <h4>테스트&middot;배포</h4>
+        <div class="time">~20분</div>
+        <div class="detail">시나리오 테스트<br>응답 품질 확인</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. 참고 링크 -->
+  <div class="section">
+    <div class="section-title"><span class="num">7</span>참고 링크</div>
+    <ul class="link-list">
+      <li><a href="https://huss.kw.ac.kr" target="_blank">huss.kw.ac.kr</a> <span class="link-desc">광운대 HUSS 공식 홈페이지</span></li>
+      <li><a href="https://husslms.ac.kr" target="_blank">husslms.ac.kr</a> <span class="link-desc">HUSS LMS 플랫폼 (강의&middot;수강 신청)</span></li>
+      <li><a href="https://husslms.ac.kr/intro/intro_symbiosis" target="_blank">husslms.ac.kr/intro/intro_symbiosis</a> <span class="link-desc">글로벌 공생 컨소시엄 소개</span></li>
+      <li><a href="https://kwnews.kw.ac.kr/news/articleView.html?idxno=12686" target="_blank">광운대신문 HUSS 기사</a> <span class="link-desc">"우리는 지속가능한 미래를 주도할 융합형 인재다!"</span></li>
+      <li><a href="https://huss.ac.kr" target="_blank">huss.ac.kr</a> <span class="link-desc">HUSS 사회구조 컨소시엄 (전체 사업 안내)</span></li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
