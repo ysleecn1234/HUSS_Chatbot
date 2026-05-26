@@ -523,12 +523,10 @@ function optimizeKnowledgeBase(text, userSchool, currentFilter) {
         skipping = false;
         const match = line.match(/\((\d{4}-\d{2}-\d{2})\)/);
         if (match && match[1] < today) {
-          skipping = true;
+          line = line.replace('■', '■ [이미 마감됨]');
         }
       }
-      if (!skipping) {
-        filteredLines.push(line);
-      }
+      filteredLines.push(line);
     }
     result.push(filteredLines.join('\n'));
   }
