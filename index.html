@@ -501,8 +501,16 @@ function optimizeKnowledgeBase(text, userSchool, currentFilter) {
   
   for (let section of sections) {
     if (section.includes('대학교 교과목') || section.includes('대학 특화 프로그램')) {
-      if (!section.includes(userSchool) && (currentFilter === '전체' || !section.includes(currentFilter))) {
-        continue;
+      if (currentFilter !== '전체') {
+        // If a specific tab is clicked, ONLY include that university's section!
+        if (!section.includes(currentFilter)) {
+          continue;
+        }
+      } else {
+        // If '전체' is clicked, include user's school
+        if (!section.includes(userSchool)) {
+          continue;
+        }
       }
     }
     
