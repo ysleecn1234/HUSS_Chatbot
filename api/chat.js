@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,13 +28,17 @@ export default async function handler(req, res) {
     );
 
     if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      return new Response(JSON.stringify({ error: errData.error?.message || `HTTP ${response.status}` }), { status: response.status, headers: { 'Content-Type': 'application/json' } });
+      const errText = await response.text();
+      return new Response(JSON.stringify({ error: `API Error: ${response.status} - ${errText}` }), { status: response.status, headers: { 'Content-Type': 'application/json' } });
     }
 
-    const data = await response.json();
-    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '답변을 생성하지 못했어. 다시 물어봐!';
-    return new Response(JSON.stringify({ reply: replyText }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    return new Response(response.body, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+    });
 
   } catch (error) {
     console.error('Gemini API Error:', error);

@@ -941,8 +941,35 @@ async function callGemini(userText) {
     throw new Error(errData.error || `HTTP ${response.status}`);
   }
 
-  const data = await response.json();
-  return data.reply;
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let fullText = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    
+    const lines = chunk.split('\n');
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const dataStr = line.substring(6).trim();
+        if (dataStr === '[DONE]') continue;
+        if (!dataStr) continue;
+        try {
+          const dataObj = JSON.parse(dataStr);
+          const textPart = dataObj.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (textPart) {
+            fullText += textPart;
+          }
+        } catch (e) {
+          console.error("JSON parse error on stream chunk:", e);
+        }
+      }
+    }
+  }
+
+  return fullText || "답변을 생성하지 못했어. 다시 물어봐!";
 }// ============================
 // Init
 // ============================
