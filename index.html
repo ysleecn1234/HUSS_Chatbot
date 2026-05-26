@@ -493,7 +493,7 @@ let config = {
 // ============================
 // System prompt
 // ============================
-function getSystemPrompt() {
+function getSystemPrompt(userText) {
   let filterNote = '';
   if (currentFilter === '광운대') {
     filterNote = '\n\n[현재 사용자가 "광운대" 필터를 선택했어. 광운대 관련 정보를 우선적으로 답변해줘.]';
@@ -598,7 +598,7 @@ function getSystemPrompt() {
 ${KNOWLEDGE_STATIC}
 
 【동적 지식 베이스 — 최신 교과목/프로그램 (자동 업데이트)】
-${text.includes('프로그램') || text.includes('과목') || text.includes('강의') || text.includes('이번 달') || text.includes('신청') ? KNOWLEDGE_DYNAMIC : '질문에 교과목/프로그램 관련 내용이 포함된 경우에만 지식 베이스가 스캔됩니다.'}
+${(userText.includes('프로그램') || userText.includes('과목') || userText.includes('강의') || userText.includes('이번 달') || userText.includes('신청')) ? KNOWLEDGE_DYNAMIC : '질문에 교과목/프로그램 관련 내용이 포함된 경우에만 지식 베이스가 스캔됩니다.'}
 ${filterNote}${userNote}`;
 }
 
@@ -916,7 +916,7 @@ async function sendMessage(quickText) {
 // API Calls
 // ============================
 async function callGemini(userText) {
-  const systemPrompt = getSystemPrompt();
+  const systemPrompt = getSystemPrompt(userText);
 
   const contents = [];
   for (let i = 0; i < conversationHistory.length; i++) {
