@@ -36,7 +36,27 @@ export default async function handler(req, res) {
       return new Response(JSON.stringify({ error: `API Error: ${response.status} - ${errText}` }), { status: response.status, headers: { 'Content-Type': 'application/json' } });
     }
 
-    return new Response(response.body, {
+    const reader = response.body.getReader();
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          // Send an immediate SSE comment to defeat Vercel's 10s TTFB timeout
+          controller.enqueue(new TextEncoder().encode(": keepalive\n\n"));
+          
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            controller.enqueue(value);
+          }
+          controller.close();
+        } catch (err) {
+          console.error("Stream error", err);
+          controller.error(err);
+        }
+      }
+    });
+
+    return new Response(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
