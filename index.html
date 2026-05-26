@@ -641,7 +641,7 @@ function getSystemPrompt(userText) {
 ${KNOWLEDGE_STATIC}
 
 【동적 지식 베이스 — 최신 교과목/프로그램 (자동 업데이트)】
-${(userText.includes('프로그램') || userText.includes('과목') || userText.includes('강의') || userText.includes('이번 달') || userText.includes('신청') || userText.includes('해')) ? optimizeKnowledgeBase(KNOWLEDGE_DYNAMIC, currentUserSchool, currentFilter) : '질문에 교과목/프로그램 관련 내용이 포함된 경우에만 지식 베이스가 스캔됩니다.'}
+${(userText.includes('프로그램') || userText.includes('과목') || userText.includes('강의') || userText.includes('이번 달') || userText.includes('신청') || userText.includes('해')) ? optimizeKnowledgeBase(KNOWLEDGE_DYNAMIC, userProfile.school, currentFilter) : '질문에 교과목/프로그램 관련 내용이 포함된 경우에만 지식 베이스가 스캔됩니다.'}
 ${filterNote}${userNote}`;
 }
 
