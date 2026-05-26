@@ -1,13 +1,17 @@
+export const config = {
+  runtime: 'edge',
+};
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
   }
 
-  const { model = 'gemini-2.5-flash', systemPrompt, contents } = req.body;
+  const { model = 'gemini-2.5-flash', systemPrompt, contents } = await req.json();
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'Server configuration error: Missing API Key in environment variables.' });
+    return new Response(JSON.stringify({ error: 'Server configuration error: Missing API Key in environment variables.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 
   try {
@@ -30,15 +34,15 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      return res.status(response.status).json({ error: errData.error?.message || `HTTP ${response.status}` });
+      return new Response(JSON.stringify({ error: errData.error?.message || `HTTP ${response.status}` }), { status: response.status, headers: { 'Content-Type': 'application/json' } });
     }
 
     const data = await response.json();
     const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || '답변을 생성하지 못했어. 다시 물어봐!';
-    return res.status(200).json({ reply: replyText });
+    return new Response(JSON.stringify({ reply: replyText }), { status: 200, headers: { 'Content-Type': 'application/json' } });
 
   } catch (error) {
     console.error('Gemini API Error:', error);
-    return res.status(500).json({ error: 'Internal server error while communicating with AI provider.' });
+    return new Response(JSON.stringify({ error: 'Internal server error while communicating with AI provider.' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
   }
 }
