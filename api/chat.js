@@ -20,29 +20,31 @@ export default async function handler(req, res) {
       contents[0].parts[0].text = `[System Instructions]\n${systemPrompt}\n\n[User Request]\n${contents[0].parts[0].text}`;
     }
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: contents
-        })
-      }
-    );
-
-    if (!response.ok) {
-      const errText = await response.text();
-      return new Response(JSON.stringify({ error: `API Error: ${response.status} - ${errText}` }), { status: response.status, headers: { 'Content-Type': 'application/json' } });
-    }
-
-    const reader = response.body.getReader();
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // Send an immediate SSE comment to defeat Vercel's 10s TTFB timeout
+          // Send an immediate SSE comment to defeat Vercel's TTFB timeout
           controller.enqueue(new TextEncoder().encode(": keepalive\n\n"));
           
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: contents
+              })
+            }
+          );
+
+          if (!response.ok) {
+            const errText = await response.text();
+            controller.enqueue(new TextEncoder().encode(`data: {"error": "API Error: ${response.status} - ${errText}"}\n\n`));
+            controller.close();
+            return;
+          }
+
+          const reader = response.body.getReader();
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -51,7 +53,8 @@ export default async function handler(req, res) {
           controller.close();
         } catch (err) {
           console.error("Stream error", err);
-          controller.error(err);
+          controller.enqueue(new TextEncoder().encode(`data: {"error": "Internal stream error"}\n\n`));
+          controller.close();
         }
       }
     });

@@ -1001,16 +1001,21 @@ async function callGemini(userText) {
       
       if (line.startsWith('data: ')) {
         const dataStr = line.substring(6).trim();
-        if (dataStr && dataStr !== '[DONE]') {
-          try {
-            const dataObj = JSON.parse(dataStr);
-            const textPart = dataObj.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (textPart) {
-              fullText += textPart;
-            }
-          } catch (e) {
-            console.error("JSON parse error on stream line:", e, "Line was:", dataStr);
+        if (dataStr === '[DONE]') break;
+        try {
+          const data = JSON.parse(dataStr);
+          if (data.error) {
+            throw new Error(data.error);
           }
+          if (data.candidates && data.candidates[0].content) {
+            fullText += data.candidates[0].content.parts[0].text;
+            updateLastMessage(fullText);
+          }
+        } catch (e) {
+          if (e.message.includes('API Error') || e.message.includes('Internal stream error')) {
+            throw e; // Bubble up to outer catch block
+          }
+          console.error("JSON parse error on stream line:", e, "Line was:", dataStr);
         }
       }
       boundary = buffer.indexOf('\n');
