@@ -106,6 +106,17 @@ def extract_courses_from_intro(html):
     return result
 
 
+def assign_tag(title, default_tag):
+    """제목을 분석하여 [공동], [광운], [국민] 태그를 자동 부여합니다."""
+    joint_keywords = ["컨소시엄", "타대학", "타 대학", "교류", "연합", "융합캠프", "공동", "전체", "공생"]
+    
+    for kw in joint_keywords:
+        if kw in title:
+            return "[공동]"
+            
+    return default_tag
+
+
 # ============================================================
 # 2) 광운대 HUSS 공지사항 추출 (huss.kw.ac.kr)
 # ============================================================
@@ -314,6 +325,59 @@ def extract_kookmin_news(html, max_count=10):
     return news_items
 
 
+def extract_kookmin_notices(html, max_count=10):
+    """국민대 기후변화대응사업단 공지사항에서 프로그램을 추출합니다."""
+    if not html:
+        return []
+
+    soup = BeautifulSoup(html, "html.parser")
+    notices = []
+
+    # 공지사항 목록 링크들 (공지사항 게시판 구조에 맞춤)
+    notice_links = soup.select("a[href*='/ko/news/notice/view/']")
+    seen = set()
+    for link in notice_links:
+        title = link.get_text(strip=True)
+        href = link.get("href", "")
+
+        if not title or len(title) < 5 or title in seen:
+            continue
+            
+        seen.add(title)
+
+        # 날짜 추출 (보통 tr 태그 안의 td에 있음)
+        date_text = ""
+        row = link.find_parent("tr")
+        if row:
+            # yyyy-mm-dd 형식의 텍스트 찾기
+            full_text = row.get_text()
+            date_match = re.search(r'(\d{4}[-./]\d{2}[-./]\d{2})', full_text)
+            if date_match:
+                date_text = date_match.group(1).replace("/", "-").replace(".", "-")
+
+        if href and not href.startswith("http"):
+            href = f"https://www.climate.ac.kr{href}"
+
+        # 핀(공지) 여부 확인
+        pinned = False
+        if row:
+            num_cell = row.find("td")
+            if num_cell and "공지" in num_cell.get_text(strip=True):
+                pinned = True
+
+        notices.append({
+            "title": title,
+            "date": date_text,
+            "url": href,
+            "pinned": pinned
+        })
+
+        if len(notices) >= max_count:
+            break
+
+    return notices
+
+
 def extract_kookmin_activities(html, max_count=5):
     """국민대 기후변화대응사업단 메인 페이지에서 활동사진/행사를 추출합니다."""
     if not html:
@@ -398,21 +462,43 @@ def build_dynamic_knowledge(courses, kw_notices, kw_schedules, km_news, km_activ
 
             sections.append(section)
 
-    # ── 광운대 HUSS 공지사항/프로그램 (날짜 + 상세 포함) ──
+    # ── HUSS 공지사항/프로그램 (광운 + 국민 통합) ──
+    all_notices = []
+    
+    # 광운대 공지에 [광운] 기본 태그 부여
     if kw_notices:
-        notice_section = "【광운대 HUSS 최근 공지사항/프로그램 모집】\n"
-        notice_section += f"(업데이트: {today})\n"
         for n in kw_notices:
+            n['tag'] = assign_tag(n['title'], "[광운]")
+            all_notices.append(n)
+            
+    # 국민대 공지에 [국민] 기본 태그 부여
+    km_notices = courses.get('km_notices_temp', []) # 꼼수로 main에서 전달
+    if km_notices:
+        for n in km_notices:
+            n['tag'] = assign_tag(n['title'], "[국민]")
+            all_notices.append(n)
+            
+    if all_notices:
+        # 날짜순 정렬 (최신순)
+        all_notices.sort(key=lambda x: x.get('date', ''), reverse=True)
+        
+        notice_section = "【HUSS 글로벌 공생 프로그램/공지 목록】\n"
+        notice_section += f"(업데이트: {today})\n"
+        notice_section += "※ 참여 태그: [광운] = 광운대 단독, [국민] = 국민대 단독, [공동] = 광운+국민 공동/컨소시엄 전체\n"
+        
+        for n in all_notices:
             pin = "[공지] " if n.get("pinned") else ""
-            notice_section += f"\n■ {pin}{n['title']} ({n['date']})"
+            notice_section += f"\n■ {pin}{n['title']} ({n['date']}) {n['tag']}"
             detail = n.get("detail", "")
             if detail:
                 notice_section += f"\n{detail}"
             url = n.get("url", "")
             if url:
-                notice_section += f"\n→ 상세: {url}"
+                notice_section += f"\n→ {url}"
             notice_section += "\n"
-        notice_section += "\n※ 전체 공지: https://huss.kw.ac.kr/bulletin/notice.php"
+        
+        notice_section += "\n※ 전체 공지(광운대): https://huss.kw.ac.kr/bulletin/notice.php"
+        notice_section += "\n※ 전체 공지(국민대): https://www.climate.ac.kr/ko/news/notice"
         sections.append(notice_section)
 
     # ── 광운대 HUSS 사업단 일정 ──
@@ -542,13 +628,20 @@ def main():
     for s in kw_schedules:
         print(f"    - {s['period']}: {s['event']}")
 
-    # 5. 국민대 기후변화대응사업단 뉴스/활동 크롤링
+    # 5. 국민대 기후변화대응사업단 크롤링
     print("\n[5/6] 국민대 기후변화대응사업단 크롤링...")
     km_main_html = fetch_page(URLS["국민대_메인"])
     km_news = extract_kookmin_news(km_main_html) if km_main_html else []
     km_activities = extract_kookmin_activities(km_main_html) if km_main_html else []
-    print(f"  국민대 뉴스 {len(km_news)}개, 활동 {len(km_activities)}개 추출")
-    for n in km_news[:3]:
+    
+    km_notice_html = fetch_page(URLS["국민대_공지"])
+    km_notices = extract_kookmin_notices(km_notice_html) if km_notice_html else []
+    
+    # km_notices를 build_dynamic_knowledge로 넘기기 위한 임시 저장
+    courses['km_notices_temp'] = km_notices
+    
+    print(f"  국민대 공지 {len(km_notices)}개, 뉴스 {len(km_news)}개, 활동 {len(km_activities)}개 추출")
+    for n in km_notices[:3]:
         print(f"    - [{n.get('date', '?')}] {n['title'][:40]}...")
 
     # 6. JS 파일 + HTML 인라인 업데이트
